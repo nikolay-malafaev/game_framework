@@ -1,0 +1,17 @@
+{
+  "name": "com.terra-play-space.game-framework",
+  "version": "0.0.1",
+  "displayName": "Game Framework",
+  "description": "A reusable Unity module for [describe functionality, e.g., inventory system, UI framework, etc.]",
+  "unity": "6000.0",
+  "unityRelease": "32f1",
+  "keywords": [
+    "unity",
+    "game-framework"
+  ],
+  "author": {
+    "name": "Nick",
+    "email": "nikolajmalafaev@gmail.com"
+  },
+  "dependencies": {}
+}

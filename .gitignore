@@ -1,0 +1,47 @@
+﻿# Build artifacts
+**/bin/
+**/obj/
+**/out/
+**/artifacts/
+**/TestResults/
+BenchmarkDotNet.Artifacts/
+
+# NuGet
+**/packages/
+*.nupkg
+*.snupkg
+*.nupkg.sha512
+project.lock.json
+project.assets.json
+**/*.nuget.dgspec.json
+**/*.nuget.g.props
+**/*.nuget.g.targets
+
+# IDE: Visual Studio / Rider / VS Code
+.vs/
+.idea/
+.vscode/
+_ReSharper*/
+*.suo
+*.user
+*.rsuser
+*.sln.iml
+*.sln.docstates
+*.DotSettings.user
+*.userosscache
+.fleet/
+
+# Coverage, logs, temp
+*.coverage
+*.coveragexml
+.coverlet/
+coverage*/
+*.log
+*.svclog
+nCrunchTemp_*/
+*.ncrunchsolution
+*.ncrunchproject
+
+# OS junk
+.DS_Store
+Thumbs.db
