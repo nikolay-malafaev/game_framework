@@ -38,7 +38,7 @@ bool Verify(System.Func<bool> condition, string? message = null, UnityEngine.Obj
 ```
 
 ## Использование
-### Через Inspector
+### Через VerificationInspector
 ```csharp
 using GameFramework.Verification;
 using UnityEngine;
@@ -47,12 +47,12 @@ public class FooClass : MonoBehaviour
 {
     void FooFunction()
     {
-        Inspector.Verify(condition: someFlag, message: "My message");
+        VerificationInspector.Verify(condition: someFlag, message: "My message");
     }
 
     void FooFunction2()
     {
-        Inspector.Verify(() => SomeExpensiveCheck(), "My message");
+        VerificationInspector.Verify(() => SomeExpensiveCheck(), "My message");
     }
 
     bool SomeExpensiveCheck() => true;
@@ -98,7 +98,7 @@ class FooClass : MonoBehaviour
 }
 ```
 ### Ранний выход
-Снижает шум и защищает от побочных эффектов.
+Снижает шум, защищает от невалидных/неверных значений
 
 ```csharp
 class FooClass : MonoBehaviour

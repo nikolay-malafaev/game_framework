@@ -2,14 +2,7 @@
 using System.Runtime.CompilerServices;
 
 namespace GameFramework.Verification
-{
-    // Add Native Interface for Win, Mac OS
-    // DONE move source to base folder. Add for gitignore files
-    // Add Tests
-    // DONE Add dicription for generation
-    // DONE Add Documention
-    // Optional: add gitigor only for it? Or in general for framework
-    
+{    
     public static class VerificationInspector
     {
         /// <summary>

@@ -4,10 +4,13 @@
     {
         public static bool NeedShowAlertDialog { get; private set; } = true;
         
-        public static string GetVerificationMessage(string reason, string userMessage, UnityEngine.Object context, string sourceFilePath, int sourceLineNumber, string memberName)
+        public static string GetVerificationMessage(string reason, string userMessage, UnityEngine.Object context, 
+            string sourceFilePath, 
+            int sourceLineNumber, 
+            string memberName)
         {
             string locationInfo = FormatLocationInfo(sourceFilePath, sourceLineNumber, memberName);
-            return FormatMessage(reason, userMessage, locationInfo);
+            return FormatMessage(reason, userMessage, locationInfo, context);
         }
         
         public static void OnClickSkipAll()
@@ -27,18 +30,21 @@
             return "FilePath: " + relativeFilePath + $" (Line {sourceLineNumber})\n" + "MemberName: " + memberName;
         }
         
-        private static string FormatMessage(string reason, string userMessage, string locationInfo)
+        private static string FormatMessage(string reason, string userMessage, string locationInfo, UnityEngine.Object context)
         {
-            string message;
+            string message = $"Reason: {reason}";
+
             if (!string.IsNullOrEmpty(userMessage))
             {
-                message = $"Reason: {reason}\nMessage: {userMessage}\n\n{locationInfo}";
-            }
-            else
-            {
-                message = $"Reason: {reason}\n\n{locationInfo}";
+                message += $"\nMessage: {userMessage}";
             }
 
+            if(context != null)
+            {
+                message += $"\nObject context name: {context.name}";
+            }
+            
+            message += $"\n\n{locationInfo}";
             return message;
         }
     }
