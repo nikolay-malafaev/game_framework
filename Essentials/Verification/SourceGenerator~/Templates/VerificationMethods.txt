@@ -17,9 +17,7 @@ private static bool Verify(bool condition, string? userMessage = null, UnityEngi
 {
 	if (!condition)
 	{
-		GameFramework.Verification.VerificationMessenger.BroadcastVerifyMessage(
-			"Verification failed!", userMessage, context,
-			sourceFilePath, sourceLineNumber, memberName);
+		GameFramework.Verification.VerificationMessenger.BroadcastMessage(userMessage, context, sourceFilePath, sourceLineNumber, memberName);
 		return false;
     }
 	return true;
@@ -44,9 +42,7 @@ private static bool Verify(System.Func<bool> condition, string? userMessage = nu
 {
 	if (!condition())
 	{
-		GameFramework.Verification.VerificationMessenger.BroadcastVerifyMessage(
-			"Verification failed!", userMessage, context,
-			sourceFilePath, sourceLineNumber, memberName);
+		GameFramework.Verification.VerificationMessenger.BroadcastMessage(userMessage, context, sourceFilePath, sourceLineNumber, memberName);
 		return false;
     }
 	return true;

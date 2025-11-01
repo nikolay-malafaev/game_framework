@@ -1,11 +1,28 @@
 ﻿using System;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace GameFramework.Verification.Tests
 {
     public class GeneratedVerificationMethodsTests
     {
+        [OneTimeSetUp]
+        public void Setup()
+        {
+            var type = Type.GetType(
+                "GameFramework.Verification.VerificationUtils, GameFramework.Verification",
+                throwOnError: true);
+
+            var prop = type.GetProperty(
+                "NeedShowAlertDialog",
+                BindingFlags.Static | BindingFlags.Public);
+
+            prop?.SetValue(null, false);
+        }
+        
         private MethodInfo GetMethod(Type type)
         {
             var arguments = new []
@@ -95,6 +112,8 @@ namespace GameFramework.Verification.Tests
         [Test]
         public void Verify_InvalidCondition_ShouldReturnFalse()
         {
+            LogAssert.Expect(LogType.Error, new Regex(".*"));
+            
             bool conditional = false;
             var stubClass = new StubVerifiableClass();
             var method = GetMethod(typeof(StubVerifiableClass));
@@ -130,11 +149,15 @@ namespace GameFramework.Verification.Tests
             Assert.IsTrue(result is bool);
             var resultBool = (bool) result;
             Assert.IsTrue(resultBool);
+            
+            LogAssert.NoUnexpectedReceived();
         }
         
         [Test]
         public void VerifyWithOverloadDelegate_InvalidCondition_ShouldReturnFalse()
         {
+            LogAssert.Expect(LogType.Error, new Regex(".*"));
+            
             Func<bool> conditional = () => false;
             var stubClass = new StubVerifiableClass();
             var method = GetMethodWithOverloadDelegate(typeof(StubVerifiableClass));
@@ -150,6 +173,8 @@ namespace GameFramework.Verification.Tests
             Assert.IsTrue(result is bool);
             var resultBool = (bool) result;
             Assert.IsFalse(resultBool);
+            
+            LogAssert.NoUnexpectedReceived();
         }
     }
 }

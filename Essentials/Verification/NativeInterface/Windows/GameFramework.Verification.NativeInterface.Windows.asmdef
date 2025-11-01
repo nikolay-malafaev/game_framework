@@ -1,10 +1,12 @@
 {
-    "name": "GameFramework.Verification",
+    "name": "GameFramework.Verification.NativeInterface.Windows",
     "rootNamespace": "",
-    "references": [
-        "GUID:402bdc3092414dee90fc78f6192382a0"
+    "references": ["GUID:4fe3896bdde24d92a700aeec5c907e61"],
+    "includePlatforms": [
+        "Editor",
+        "WindowsStandalone32",
+        "WindowsStandalone64"
     ],
-    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

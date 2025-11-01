@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿#undef VERIFICATION_WINDOW_ENABLED
+
+using NUnit.Framework;
 using UnityEngine;
 
 namespace GameFramework.Verification.Tests

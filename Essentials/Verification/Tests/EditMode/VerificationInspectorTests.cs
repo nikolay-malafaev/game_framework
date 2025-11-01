@@ -1,10 +1,28 @@
 ﻿using System;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace GameFramework.Verification.Tests
-{
+{ 
     public class VerificationInspectorTests
     {
+        [OneTimeSetUp]
+        public void Setup()
+        {
+            var type = Type.GetType(
+                "GameFramework.Verification.VerificationUtils, GameFramework.Verification",
+                throwOnError: true);
+
+            var prop = type.GetProperty(
+                "NeedShowAlertDialog",
+                BindingFlags.Static | BindingFlags.Public);
+
+            prop?.SetValue(null, false);
+        }
+        
         [Test]
         public void Verify_ValidCondition_ShouldReturnTrue()
         {
@@ -16,10 +34,12 @@ namespace GameFramework.Verification.Tests
         [Test]
         public void Verify_InvalidCondition_ShouldReturnFalseAndLogError()
         {
-            bool conditional = false;
-            bool result = VerificationInspector.Verify(conditional);
+            LogAssert.Expect(LogType.Error, new Regex(".*"));
+            
+            var result = VerificationInspector.Verify(false);
             Assert.IsFalse(result);
-            // todo log error
+            
+            LogAssert.NoUnexpectedReceived();
         }
         
         [Test]
@@ -33,10 +53,13 @@ namespace GameFramework.Verification.Tests
         [Test]
         public void VerifyWithOverloadDelegate_InvalidCondition_ShouldReturnFalseAndLogError()
         {
+            LogAssert.Expect(LogType.Error, new Regex(".*"));
+            
             Func<bool> conditional = () => false;
             bool result = VerificationInspector.Verify(conditional);
             Assert.IsFalse(result);
-            // todo log error
+            
+            LogAssert.NoUnexpectedReceived();
         }
     }
 }

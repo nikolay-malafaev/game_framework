@@ -24,9 +24,7 @@ namespace GameFramework.Verification
         {
             if (!condition)
             {
-                VerificationMessenger.BroadcastVerifyMessage(
-                    "Verification failed!", userMessage, context,
-                    sourceFilePath, sourceLineNumber, memberName);
+                VerificationMessenger.BroadcastMessage(userMessage, context, sourceFilePath, sourceLineNumber, memberName);
                 return false;
             }
             return true;
@@ -51,9 +49,7 @@ namespace GameFramework.Verification
         {
             if (!condition())
             {
-                VerificationMessenger.BroadcastVerifyMessage(
-                    "Verification failed!", userMessage, context,
-                    sourceFilePath, sourceLineNumber, memberName);
+                VerificationMessenger.BroadcastMessage(userMessage, context, sourceFilePath, sourceLineNumber, memberName);
                 return false;
             }
             return true;

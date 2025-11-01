@@ -1,9 +1,7 @@
 {
-    "name": "GameFramework.Verification",
+    "name": "GameFramework.Verification.NativeInterface.Common",
     "rootNamespace": "",
-    "references": [
-        "GUID:402bdc3092414dee90fc78f6192382a0"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
