@@ -14,6 +14,7 @@ namespace GameFramework.DI
             get
             {
                 var instance = Instance.Value;
+                instance._context ??= instance.CreateContext();
                 return instance._context;
             }
         } 
