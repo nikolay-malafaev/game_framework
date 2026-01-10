@@ -10,13 +10,13 @@
 /// <param name="sourceLineNumber">Auto-filled line number.</param>
 /// <param name="memberName">Auto-filled member name.</param>
 /// <returns>True if the condition is true, otherwise false.</returns>
-private bool Verify(bool condition, string message = null, UnityEngine.Object? context = null,
+private bool Verify(bool condition, string? message = null, UnityEngine.Object? context = null,
 	[System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
 	[System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0,
 	[System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
 {
-	UnityEngine.Object? unityObject = (object) this as UnityEngine.Object;
-    return GameFramework.Verification.VerificationContainer.Context.Verify(condition, message, unityObject, 
+	context ??= (object) this as UnityEngine.Object;
+    return GameFramework.Verification.VerificationContainer.Context.Verify(condition, message, context, 
                     sourceFilePath,
                     sourceLineNumber,
                     memberName);
@@ -34,13 +34,13 @@ private bool Verify(bool condition, string message = null, UnityEngine.Object? c
 /// <param name="sourceLineNumber">Auto-filled line number.</param>
 /// <param name="memberName">Auto-filled member name.</param>
 /// <returns>True if the condition returns true, otherwise false.</returns>
-private bool Verify(System.Func<bool> condition, string message = null, UnityEngine.Object? context = null, 
+private bool Verify(System.Func<bool> condition, string? message = null, UnityEngine.Object? context = null, 
 	[System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
 	[System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0,
 	[System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
 {
-    UnityEngine.Object? unityObject = (object) this as UnityEngine.Object;
-    return GameFramework.Verification.VerificationContainer.Context.Verify(condition, message, unityObject, 
+    context ??= (object) this as UnityEngine.Object;
+    return GameFramework.Verification.VerificationContainer.Context.Verify(condition, message, context, 
                         sourceFilePath,
                         sourceLineNumber,
                         memberName);

@@ -1,9 +1,11 @@
 ﻿using System;
+using GameFramework.Logging;
 using Object = UnityEngine.Object;
 
 namespace GameFramework.Verification
 {
-    public class ProductionVerificationContext : IVerificationContext
+    [Loggable("Verification")]
+    public partial class ProductionVerificationContext : IVerificationContext
     {
         public bool Verify(bool condition, string message = null, Object context = null, 
             string sourceFilePath = "", 
@@ -14,8 +16,8 @@ namespace GameFramework.Verification
             {
                 return true;
             }
-            string formatMessage = VerificationUtils.FormatMessage(message, context, sourceFilePath, sourceLineNumber, memberName);
-            UnityEngine.Debug.unityLogger.Log(UnityEngine.LogType.Exception, "Verification", formatMessage, context);
+            string logMessage = VerificationUtils.FormatLogMessage(message, sourceFilePath, sourceLineNumber, memberName);
+            LogError(logMessage, context);
             VerificationAnalytics.SendEvent();
             return false;
         }
@@ -29,8 +31,8 @@ namespace GameFramework.Verification
             {
                 return true;
             }
-            string formatMessage = VerificationUtils.FormatMessage(message, context, sourceFilePath, sourceLineNumber, memberName);
-            UnityEngine.Debug.unityLogger.Log(UnityEngine.LogType.Exception, "Verification", formatMessage, context);
+            string logMessage = VerificationUtils.FormatLogMessage(message, sourceFilePath, sourceLineNumber, memberName);
+            LogError(logMessage, context);
             VerificationAnalytics.SendEvent();
             return false;
         }

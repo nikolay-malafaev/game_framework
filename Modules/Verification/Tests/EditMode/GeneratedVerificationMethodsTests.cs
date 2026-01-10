@@ -1,26 +1,21 @@
 ﻿using System;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
 
 namespace GameFramework.Verification.Tests
 {
     public class GeneratedVerificationMethodsTests
     {
         [OneTimeSetUp]
-        public void Setup()
+        public void SetUp()
         {
-            var type = Type.GetType(
-                "GameFramework.Verification.VerificationUtils, GameFramework.Verification",
-                throwOnError: true);
-
-            var prop = type.GetProperty(
-                "NeedShowAlertDialog",
-                BindingFlags.Static | BindingFlags.Public);
-
-            prop?.SetValue(null, false);
+            VerificationContainer.SetContext(new TestVerificationContext());
+        }
+        
+        [OneTimeTearDown]
+        public void TearDown()
+        {
+            VerificationContainer.ClearContext();
         }
         
         private MethodInfo GetMethod(Type type)
@@ -28,7 +23,7 @@ namespace GameFramework.Verification.Tests
             var arguments = new []
             {
                 typeof(bool),                   // condition
-                typeof(string),                 // userMessage
+                typeof(string),                 // message
                 typeof(UnityEngine.Object),     // context
                 typeof(string),                 // sourceFilePath
                 typeof(int),                    // sourceLineNumber
@@ -36,7 +31,7 @@ namespace GameFramework.Verification.Tests
             };
             return type.GetMethod(
                 "Verify", 
-                BindingFlags.NonPublic | BindingFlags.Static,
+                BindingFlags.NonPublic | BindingFlags.Instance,
                 null,
                 arguments,
                 null);
@@ -55,7 +50,7 @@ namespace GameFramework.Verification.Tests
             };
             return type.GetMethod(
                 "Verify", 
-                BindingFlags.NonPublic | BindingFlags.Static,
+                BindingFlags.NonPublic | BindingFlags.Instance,
                 null,
                 arguments,
                 null);
@@ -112,8 +107,6 @@ namespace GameFramework.Verification.Tests
         [Test]
         public void Verify_InvalidCondition_ShouldReturnFalse()
         {
-            LogAssert.Expect(LogType.Error, new Regex(".*"));
-            
             bool conditional = false;
             var stubClass = new StubVerifiableClass();
             var method = GetMethod(typeof(StubVerifiableClass));
@@ -149,15 +142,11 @@ namespace GameFramework.Verification.Tests
             Assert.IsTrue(result is bool);
             var resultBool = (bool) result;
             Assert.IsTrue(resultBool);
-            
-            LogAssert.NoUnexpectedReceived();
         }
         
         [Test]
         public void VerifyWithOverloadDelegate_InvalidCondition_ShouldReturnFalse()
         {
-            LogAssert.Expect(LogType.Error, new Regex(".*"));
-            
             Func<bool> conditional = () => false;
             var stubClass = new StubVerifiableClass();
             var method = GetMethodWithOverloadDelegate(typeof(StubVerifiableClass));
@@ -173,8 +162,6 @@ namespace GameFramework.Verification.Tests
             Assert.IsTrue(result is bool);
             var resultBool = (bool) result;
             Assert.IsFalse(resultBool);
-            
-            LogAssert.NoUnexpectedReceived();
         }
     }
 }

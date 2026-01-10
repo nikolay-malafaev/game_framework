@@ -1,20 +1,22 @@
 ﻿# Verification
 
 ## Обзор
-Внешний Assembly Definition: **GameFramework.Verification**.
-
-Define: **VERIFY_WINDOW_ENABLED**
-
-Назначение:
 - Проверяет корректность значений.
 - Отлавливает ошибки конфигурации.
 - Валидирует игровые объекты
 
 ### Логика работы
-- Verify принимает condition и возвращает bool.
-  - Если condition == true → вернуть true
-  - Если condition == false → вернуть false. Записать сообщение в консоль. Если определен дефайн **VERIFICATION_WINDOW_ENABLED** (см [Defines](../)) и в этой сессии не был нажат **Skip All** - показать окно.
-- Исключений не бросает.
+- Verify принимает condition и возвращает bool - результат condition. Дальнешие действия в зависимости от реализации контекста.
+  - DebugVerificationContext - если не был определен дефайн BUILD_PRODUCTION
+    - Если condition == true → вернуть true
+    - Если condition == false → вернуть false. Записать сообщение в консоль. Показать окно (если в этой сессии не был нажат **Skip All**)
+  - ProductionVerificationContext - если был определен дефайн BUILD_PRODUCTION
+    - Если condition == true → вернуть true
+    - Если condition == false → вернуть false. Записать сообщение в консоль. Отправить аналитический ивент
+  - TestVerificationContext - используется в тестах
+    - Если condition == true → вернуть true
+    - Если condition == false → вернуть false
+- Исключений не бросает
 
 ### Окно
 Сообщает о причине провала верификации.
@@ -29,7 +31,6 @@ Define: **VERIFY_WINDOW_ENABLED**
 - путь до файла.
 - название файла.
 - строку в которой производилась верификация.
-- объект-контекст (если есть).
 
 ## Публичное API
 ```csharp
@@ -38,31 +39,11 @@ bool Verify(System.Func<bool> condition, string? message = null, UnityEngine.Obj
 ```
 
 ## Использование
-### Через VerificationInspector
-```csharp
-using GameFramework.Verification;
-using UnityEngine;
-
-public class FooClass : MonoBehaviour
-{
-    void FooFunction()
-    {
-        VerificationInspector.Verify(condition: someFlag, message: "My message");
-    }
-
-    void FooFunction2()
-    {
-        VerificationInspector.Verify(() => SomeExpensiveCheck(), "My message");
-    }
-
-    bool SomeExpensiveCheck() => true;
-}
-```
-### Атрибут Verifiable
+### Атрибут Verifiable (рекомендуется)
 Атрибут добавляет в класс методы Verify(...) через генерацию кода (см. [Генерация кода](../../Core/SourceGeneration/README.md)).
 ```csharp
-using GameFramework.Verification;
 using UnityEngine;
+using GameFramework.Verification;
 
 [Verifiable]
 public partial class FooClass : MonoBehaviour
@@ -81,22 +62,28 @@ public partial class FooClass : MonoBehaviour
 }
 ```
 
-## Best Practice
-### Простая проверка объектов
-**UnityEngine.Object** неявно приводится к bool (obj != null).
-
+### VerificationContainer.Context
 ```csharp
-class FooClass : MonoBehaviour
-{
-    GameObject someGameObject;
+using UnityEngine;
+using GameFramework.Verification;
 
-    void Init()
+public class FooClass : MonoBehaviour
+{
+    void FooFunction()
     {
-        Verify(someGameObject, "SomeGameObject is missing");
-        // ...
+        VerificationContainer.Context.Verify(condition: someFlag, message: "My message");
     }
+
+    void FooFunction2()
+    {
+        VerificationContainer.Context.Verify(() => SomeExpensiveCheck(), "My message");
+    }
+
+    bool SomeExpensiveCheck() => true;
 }
 ```
+
+## Best Practice
 ### Ранний выход
 Снижает шум, защищает от невалидных/неверных значений
 
@@ -126,6 +113,31 @@ class FooClass : MonoBehaviour
     }
 }
 ```
+### Простая проверка объектов
+**UnityEngine.Object** неявно приводится к bool (obj != null).
+```csharp
+class FooClass : MonoBehaviour
+{
+    GameObject someGameObject;
+    GameObject someGameObject2;
+
+    void Init()
+    {
+        if(!Verify(someGameObject, "SomeGameObject is missing"))
+        {
+            return;
+        }
+        // ...
+    }
+    
+    void PostInit()
+    {
+        Verify(someGameObject2, "SomeGameObject is missing");
+        // ...
+    }
+}
+```
+
 ## Производительность
 - Используйте лямбда-версию, когда проверка дорогая.
 - Делегат вычисляется один раз внутри Verify

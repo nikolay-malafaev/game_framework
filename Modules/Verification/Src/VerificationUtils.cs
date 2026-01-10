@@ -1,20 +1,31 @@
 ﻿using System;
-using Object = UnityEngine.Object;
 
 namespace GameFramework.Verification
 {
     internal static class VerificationUtils
     {
-        public static string FormatMessage(string message, Object context, 
+        public static string FormatLogMessage(string message, 
             string sourceFilePath,
             int sourceLineNumber, 
             string memberName)
         {
-            string locationInfo = FormatLocationInfo(sourceFilePath, sourceLineNumber, memberName);
-            return BuildMessage(message, locationInfo, context);
+            return string.Concat("Verification failed", string.IsNullOrWhiteSpace(message) ? " " : ": ",  
+                message, "\n  at ", memberName, " () in ", TrimFilePath(sourceFilePath), ":", sourceLineNumber);
         }
-        
-        private static string FormatLocationInfo(string sourceFilePath, int sourceLineNumber, string memberName)
+
+        public static string FormatWindowMessage(string message, 
+            string sourceFilePath,
+            int sourceLineNumber, 
+            string memberName)
+        {
+            if (string.IsNullOrEmpty(message))
+            {
+                return string.Concat(memberName, " ()\n", TrimFilePath(sourceFilePath), ":", sourceLineNumber);
+            }
+            return string.Concat(message, "\n \n", memberName, " ()\n", TrimFilePath(sourceFilePath), ":", sourceLineNumber);
+        }
+
+        private static string TrimFilePath(string sourceFilePath)
         {
             int assetsIndex = sourceFilePath.IndexOf("Assets", StringComparison.Ordinal);
             string relativeFilePath = sourceFilePath;
@@ -22,39 +33,7 @@ namespace GameFramework.Verification
             {
                 relativeFilePath = sourceFilePath.Substring(assetsIndex);
             }
-
-            return "File Path: " + relativeFilePath + $" (Line {sourceLineNumber})\n" + "Member Name: " + memberName;
-        }
-        
-        private static string BuildMessage(string userMessage, string locationInfo, Object context)
-        {
-            var messageBuilder = new System.Text.StringBuilder();
-
-            if (!string.IsNullOrEmpty(userMessage))
-            {
-                messageBuilder.Append($"Message: {userMessage}");
-            }
-
-            if (context != null)
-            {
-                if (messageBuilder.Length > 0)
-                {
-                    messageBuilder.AppendLine();
-                }
-                messageBuilder.Append($"Context object name: {context.name}");
-            }
-
-            if (!string.IsNullOrEmpty(locationInfo))
-            {
-                if (messageBuilder.Length > 0)
-                {
-                    messageBuilder.AppendLine();
-                    messageBuilder.AppendLine();
-                }
-                messageBuilder.Append(locationInfo);
-            }
-
-            return messageBuilder.ToString();
+            return relativeFilePath;
         }
     }
 }

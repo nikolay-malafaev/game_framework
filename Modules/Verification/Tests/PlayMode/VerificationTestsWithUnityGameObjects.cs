@@ -1,12 +1,22 @@
-﻿#undef VERIFICATION_WINDOW_ENABLED
-
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using UnityEngine;
 
 namespace GameFramework.Verification.Tests
 {
-    public class VerificationInspectorTests
+    public class VerificationTestsWithUnityGameObjects
     {
+        [OneTimeSetUp]
+        public void SetUp()
+        {
+            VerificationContainer.SetContext(new TestVerificationContext());
+        }
+        
+        [OneTimeTearDown]
+        public void TearDown()
+        {
+            VerificationContainer.ClearContext();
+        }
+        
         [Test]
         public void Verify_ValidGameObject_ShouldReturnTrue()
         {

@@ -1,2 +1,0 @@
-- Verification
-  - **VERIFY_WINDOW_ENABLED**

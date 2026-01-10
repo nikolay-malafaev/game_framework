@@ -1,9 +1,11 @@
 ﻿using System;
+using GameFramework.Logging;
 using Object = UnityEngine.Object;
 
 namespace GameFramework.Verification
 {
-    public class DebugVerificationContext : IVerificationContext
+    [Loggable("Verification")]
+    public partial class DebugVerificationContext : IVerificationContext
     {
         private bool _isWindowSkipped = false;
         
@@ -36,12 +38,14 @@ namespace GameFramework.Verification
             int sourceLineNumber, 
             string memberName)
         {
-            string formatMessage = VerificationUtils.FormatMessage(message, context, sourceFilePath, sourceLineNumber, memberName);
-            UnityEngine.Debug.unityLogger.Log(UnityEngine.LogType.Exception, "Verification", formatMessage, context);
+            string logMessage = VerificationUtils.FormatLogMessage(message, sourceFilePath, sourceLineNumber, memberName);
+            LogError(logMessage, context);
+            
             if (!_isWindowSkipped)
             {
                 UnityEngine.Time.timeScale = 0;
-                VerificationWindow.Show(formatMessage, null, () => _isWindowSkipped = true);
+                string windowMessage = VerificationUtils.FormatWindowMessage(message, sourceFilePath, sourceLineNumber, memberName);
+                VerificationWindow.Show(windowMessage, null, () => _isWindowSkipped = true);
             }
         }
     }
