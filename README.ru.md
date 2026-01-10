@@ -1,4 +1,4 @@
-# GameFramework
+# Game Framework for Unity
 
 ## 📦 Зависимости
 |            Название            | Версия |                                                        Комментарий                                                        |
@@ -7,6 +7,7 @@
 
 ## 🧩 Структура проекта
 
-- GameFramework
-  - Essentials
-    - [Verification](Essentials/Verification/README.ru.md)
+- Game
+  - 
+- Modules
+  - [Verification](Modules/Verification/README.ru.md)

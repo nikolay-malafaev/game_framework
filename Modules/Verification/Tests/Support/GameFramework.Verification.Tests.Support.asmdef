@@ -1,0 +1,16 @@
+{
+    "name": "GameFramework.Verification.Tests.Support",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e364dc7df5b94038805c11539ce148b0"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
