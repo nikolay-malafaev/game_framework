@@ -2,7 +2,7 @@
     "name": "GameFramework.Verification.Tests.Support",
     "rootNamespace": "",
     "references": [
-        "GUID:e364dc7df5b94038805c11539ce148b0"
+        "GUID:70faa4c7e2ef485897efbcbf466dda3a"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -10,7 +10,9 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }

@@ -5,7 +5,7 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "GameFramework.Verification.Tests.Support",
-        "GameFramework.Verification"
+        "GameFramework.Modules"
     ],
     "includePlatforms": [
         "Editor"

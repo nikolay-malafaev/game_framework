@@ -1,9 +1,9 @@
 {
-    "name": "GameFramework.Verification",
+    "name": "GameFramework.Modules",
     "rootNamespace": "",
     "references": [
         "GUID:402bdc3092414dee90fc78f6192382a0",
-        "GUID:aa73e01967474a9cb628d7080f378b82"
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -7,31 +7,27 @@ namespace GameFramework.DI
     {
         private static readonly Lazy<TContainer> Instance = new(() => new TContainer(), isThreadSafe: true);
 
-        protected abstract TContext DefaultContext { get; }
-
-        private TContext _storedContext = null;
-
+        private TContext _context;
+        
         public static TContext Context
         {
             get
             {
                 var instance = Instance.Value;
-                
-                if (instance._storedContext != null)
-                    return instance._storedContext;
-
-                return instance.DefaultContext;
+                return instance._context;
             }
-        }
+        } 
 
         public static void SetContext(TContext context)
         {
-            Instance.Value._storedContext = context;
+            Instance.Value._context = context;
         }
 
         public static void ClearContext()
         {
-            Instance.Value._storedContext = null;
-        } 
+            Instance.Value._context = null;
+        }
+        
+        protected abstract TContext CreateContext();
     }
 }
