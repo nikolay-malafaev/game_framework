@@ -1,0 +1,31 @@
+﻿private void LogInfo(string message, UnityEngine.Object? context = null, params string[] tags)
+{
+    context ??= (object)this as UnityEngine.Object;
+    GameFramework.Logging.LoggingContainer.Context.LoggingHelper.SendLog(UnityEngine.LogType.Log, LOGGING_CLASS_TAG, tags, message, context);
+}
+
+private void LogWarning(string message, UnityEngine.Object? context = null, params string[] tags)
+{
+    context ??= (object)this as UnityEngine.Object;
+    GameFramework.Logging.LoggingContainer.Context.LoggingHelper.SendLog(UnityEngine.LogType.Warning, LOGGING_CLASS_TAG, tags, message, context);
+}
+
+private void LogError(string message, UnityEngine.Object? context = null, params string[] tags)
+{
+    context ??= (object)this as UnityEngine.Object;
+    GameFramework.Logging.LoggingContainer.Context.LoggingHelper.SendLog(UnityEngine.LogType.Error, LOGGING_CLASS_TAG, tags, message, context);
+}
+
+private void LogError(System.Exception exception, UnityEngine.Object? context = null, params string[] tags)
+{
+    string message = exception.ToString() ?? "Unknown exception";    
+    context ??= (object)this as UnityEngine.Object;
+    GameFramework.Logging.LoggingContainer.Context.LoggingHelper.SendLog(UnityEngine.LogType.Error, LOGGING_CLASS_TAG, tags, message, context);
+}
+
+private void LogException(System.Exception exception, UnityEngine.Object? context = null, params string[] tags)
+{
+    string message = exception.ToString() ?? "Unknown exception";    
+    context ??= (object)this as UnityEngine.Object;
+    GameFramework.Logging.LoggingContainer.Context.LoggingHelper.SendLog(UnityEngine.LogType.Exception, LOGGING_CLASS_TAG, tags, message, context);
+}
