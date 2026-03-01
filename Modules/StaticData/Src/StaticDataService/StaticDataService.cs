@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.Utilities;
 
 namespace GameFramework.StaticData
 {
@@ -12,24 +13,24 @@ namespace GameFramework.StaticData
         {
             Type assetType = typeof(TAsset);
 
-            if (!_staticDataAssets.ContainsKey(assetType))
+            if (!_staticDataAssets.TryGetValue(assetType, out List<StaticDataAsset> assets) || assets.Count == 0)
             {
-                throw new Exception($"Configuration type {assetType} is not exists");
+                throw new Exception($"Configuration type {assetType} does not exist or is empty.");
             }
 
-            return _staticDataAssets[assetType][0] as TAsset;
+            return (TAsset) assets[0];
         }
         
         public IReadOnlyList<TAsset> GetAll<TAsset>() where TAsset : StaticDataAsset
         {
             Type assetType = typeof(TAsset);
 
-            if (!_staticDataAssets.ContainsKey(assetType))
+            if (!_staticDataAssets.TryGetValue(assetType, out List<StaticDataAsset> assets))
             {
-                throw new Exception($"Configuration type {assetType} is not exists");
+                throw new Exception($"Configuration type {assetType} does not exist.");
             }
 
-            return _staticDataAssets[assetType].Select(staticDataAsset => staticDataAsset as TAsset).ToList();
+            return assets.Cast<TAsset>().ToList();
         }
 
         public bool Contains<TAsset>() where TAsset : StaticDataAsset
@@ -40,22 +41,27 @@ namespace GameFramework.StaticData
 
         public void Add<TAsset>(TAsset asset) where TAsset : StaticDataAsset
         {
-            Type assetType = typeof(TAsset);
-            if (!_staticDataAssets.ContainsKey(assetType))
+            if (asset == null) return;
+            
+            Type assetType = asset.GetType();
+            
+            if (!_staticDataAssets.TryGetValue(assetType, out List<StaticDataAsset> assets))
             {
-                _staticDataAssets.Add(assetType, new List<StaticDataAsset>());
+                assets = new List<StaticDataAsset>();
+                _staticDataAssets[assetType] = assets;
             }
-            _staticDataAssets[typeof(TAsset)].Add(asset);
+            
+            assets.Add(asset);
         }
 
         public void Add<TAsset>(IReadOnlyList<TAsset> assets) where TAsset : StaticDataAsset
         {
-            Type assetType = typeof(TAsset);
-            if (!_staticDataAssets.ContainsKey(assetType))
+            if (assets == null) return;
+            
+            foreach (var asset in assets)
             {
-                _staticDataAssets.Add(assetType, new List<StaticDataAsset>());
+                Add(asset);
             }
-            _staticDataAssets[typeof(TAsset)].AddRange(assets);
         }
     }
 }
