@@ -5,7 +5,7 @@ using UnityEngine.AddressableAssets;
 
 namespace GameFramework.StaticData
 {
-    public interface IAddressableService : IDisposable
+    public interface IAddressableService
     {
         UniTask<TAsset[]> LoadAsync<TAsset>(IEnumerable<AssetReference> assetReferences) where TAsset : UnityEngine.Object;
 

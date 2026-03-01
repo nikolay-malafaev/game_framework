@@ -1,27 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cysharp.Threading.Tasks;
-using GameFramework.Loading;
 
 namespace GameFramework.StaticData
 {
-    public class StaticDataService : IStaticDataService, ILoadingOperation
+    public class StaticDataService : IStaticDataService
     {
         private readonly Dictionary<Type, List<StaticDataAsset>> _staticDataAssets = new();
-        private readonly IAddressableService _addressableService;
-        private readonly StaticDataSettings _staticDataSettings;
-
-        public StaticDataService(IAddressableService addressableService, StaticDataSettings staticDataSettings)
-        {
-            _addressableService = addressableService;
-            _staticDataSettings = staticDataSettings;
-        }
-        
-        public void Dispose()
-        {
-            _addressableService.Dispose();
-        }
         
         public TAsset Get<TAsset>() where TAsset : StaticDataAsset
         {
@@ -52,22 +37,25 @@ namespace GameFramework.StaticData
             Type assetType = typeof(TAsset);
             return _staticDataAssets.ContainsKey(assetType);
         }
-        
-        public async UniTask<LoadingResult> Run()
-        {
-            StaticDataAsset[] staticDataAssets = await _addressableService.LoadByLabelAsync<StaticDataAsset>(_staticDataSettings.AddressableDefaultLabel);
 
-            foreach (StaticDataAsset staticDataAsset in staticDataAssets)
+        public void Add<TAsset>(TAsset asset) where TAsset : StaticDataAsset
+        {
+            Type assetType = typeof(TAsset);
+            if (!_staticDataAssets.ContainsKey(assetType))
             {
-                Type assetType = staticDataAsset.GetType();
-                if (!_staticDataAssets.ContainsKey(assetType))
-                {
-                    _staticDataAssets.Add(assetType, new List<StaticDataAsset>());
-                }
-                _staticDataAssets[assetType].Add(staticDataAsset);
+                _staticDataAssets.Add(assetType, new List<StaticDataAsset>());
             }
-            
-            return LoadingResult.Success("StaticData loaded successfully");
+            _staticDataAssets[typeof(TAsset)].Add(asset);
+        }
+
+        public void Add<TAsset>(IReadOnlyList<TAsset> assets) where TAsset : StaticDataAsset
+        {
+            Type assetType = typeof(TAsset);
+            if (!_staticDataAssets.ContainsKey(assetType))
+            {
+                _staticDataAssets.Add(assetType, new List<StaticDataAsset>());
+            }
+            _staticDataAssets[typeof(TAsset)].AddRange(assets);
         }
     }
 }

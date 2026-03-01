@@ -8,8 +8,8 @@ namespace GameFramework.Loading
         public async UniTask<LoadingResult> Run()
         {
             // play hide animation
-            var loadingScene = SceneManager.GetActiveScene();
-            var asyncOperation = SceneManager.UnloadSceneAsync(loadingScene.buildIndex);
+            //var loadingScene = SceneManager.GetActiveScene();
+            var asyncOperation = SceneManager.UnloadSceneAsync("Loading");
             await asyncOperation.ToUniTask();
             return LoadingResult.Success("Hide loading view");   
         }

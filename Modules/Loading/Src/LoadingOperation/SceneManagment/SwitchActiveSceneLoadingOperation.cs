@@ -14,18 +14,18 @@ namespace GameFramework.Loading
         
         public async UniTask<LoadingResult> Run()
         {
-            var newActiveScene = SceneManager.GetSceneByName(_sceneName);
+            var newActiveScene = await LoadSceneAdditive(_sceneName);
             var oldActiveScene = SceneManager.GetActiveScene();
-            await LoadSceneAdditive(newActiveScene);
             SceneManager.SetActiveScene(newActiveScene);
             await UnloadScene(oldActiveScene);
             return LoadingResult.Success(string.Format("Loaded scene: {0}", newActiveScene.name));
         }
 
-        private UniTask LoadSceneAdditive(Scene scene)
+        private async UniTask<Scene> LoadSceneAdditive(string sceneName)
         {
-            var asyncOperation = SceneManager.LoadSceneAsync(scene.buildIndex, LoadSceneMode.Additive);
-            return asyncOperation.ToUniTask();
+            var asyncOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+            await asyncOperation.ToUniTask();
+            return SceneManager.GetSceneByName(sceneName);
         }
 
         private UniTask UnloadScene(Scene scene)

@@ -8,7 +8,7 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 
 namespace GameFramework.StaticData
 {
-    public sealed class AddressableService : IAddressableService
+    public sealed class AddressableService : IAddressableService, IDisposable
     {
         private readonly Dictionary<AssetReference, AsyncOperationHandle> _assetReferenceRequests = new();
         private readonly Dictionary<string, AsyncOperationHandle> _addressRequests = new();

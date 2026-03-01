@@ -2,16 +2,17 @@ using Cysharp.Threading.Tasks;
 
 namespace GameFramework.StateMachine
 {
-    public abstract class StateBase : IState
+    public abstract class StateBase<TStateMachine> : IState where TStateMachine : class, IStateMachine
     {
-        private readonly IStateMachine _stateMachine;
+        protected readonly TStateMachine _stateMachine;
         
-        public StateBase(IStateMachine stateMachine)
+        public StateBase(TStateMachine stateMachine)
         {
             _stateMachine = stateMachine;
         }
         
         public virtual UniTask Enter() => UniTask.CompletedTask;
+        public virtual void Update() { }
         public virtual UniTask Exit() => UniTask.CompletedTask;
     }
 }

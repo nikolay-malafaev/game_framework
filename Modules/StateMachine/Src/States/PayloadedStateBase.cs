@@ -13,6 +13,8 @@ namespace GameFramework.StateMachine
         
         public virtual UniTask Enter(TPayload payload) => UniTask.CompletedTask;
 
+        public virtual void Update() { }
+        
         public virtual UniTask Exit() => UniTask.CompletedTask;
     }
 }

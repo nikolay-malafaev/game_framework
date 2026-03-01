@@ -43,6 +43,7 @@ namespace GameFramework.Logging
         private int _writeBufferIndex = 0;
         private bool _disposing = false;
         private LogFileWriter _logFileWriter;
+        private UniTask _flushLoopTask;
         private string _path;
 
         public LogRecorder(LogFileWriter logFileWriter, string folder)
@@ -54,16 +55,13 @@ namespace GameFramework.Logging
             _cancellationToken = new CancellationTokenSource();
             FormatPath(folder, logFileWriter.IsCompressed);
             CheckAndCachedLogFiles(folder);
-            _ = FlushLoop();
+            _flushLoopTask = FlushLoop();
         }
 
         public void Dispose()
         {
             if(_disposing) return;
-            
             _disposing = true;
-            _cancellationToken.Cancel();
-            _cancellationToken.Dispose();
             
             if (_writeBufferIndex > 0)
             {
@@ -71,7 +69,21 @@ namespace GameFramework.Logging
             }
             FlushQueue();
             
+            try
+            {
+                _cancellationToken.Cancel();
+            }
+            catch (ObjectDisposedException) { }
+            
+            try
+            {
+                _hasDataSemaphore.Release();
+            }
+            catch (ObjectDisposedException) { /* ignore */ }
+            catch (SemaphoreFullException) { /* ignore */ }
+            
             _hasDataSemaphore.Dispose();
+            _cancellationToken.Dispose();
         }
 
         public void RecordLog(string message)
@@ -108,11 +120,22 @@ namespace GameFramework.Logging
                 try
                 {
                     await _hasDataSemaphore.WaitAsync(token);
+
+                    var dggd = 1;
                 }
                 catch (OperationCanceledException)
                 {
                     return;
                 }
+                catch (ObjectDisposedException)
+                {
+                    return;
+                }
+                catch (ArgumentNullException)
+                {
+                    return;
+                }
+                
                 await UniTask.RunOnThreadPool(FlushQueue);
             }
         }

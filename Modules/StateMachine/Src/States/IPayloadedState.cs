@@ -4,6 +4,6 @@ namespace GameFramework.StateMachine
 {
     public interface IPayloadedState<TPayload> : IExitableState
     {
-        public UniTask Enter(TPayload payload);
+        UniTask Enter(TPayload payload);
     }
 }

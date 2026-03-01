@@ -16,7 +16,7 @@ namespace GameFramework.Loading
         {
             if (_stateMachine.HasState<TState>())
             {
-                await _stateMachine.SwitchState<TState>();
+                await _stateMachine.SwitchStateAsync<TState>();
                 return LoadingResult.Success(string.Format("State \"{0}\" was switched.", nameof(TState)));
             }
 

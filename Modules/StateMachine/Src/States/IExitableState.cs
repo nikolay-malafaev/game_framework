@@ -4,6 +4,7 @@ namespace GameFramework.StateMachine
 {
     public interface IExitableState
     {
-        public UniTask Exit();
+        UniTask Exit();
+        void Update();
     }
 }

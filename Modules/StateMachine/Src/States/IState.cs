@@ -4,6 +4,6 @@ namespace GameFramework.StateMachine
 {
     public interface IState : IExitableState
     {
-        public UniTask Enter();
+        UniTask Enter();
     }
 }
