@@ -100,12 +100,6 @@ namespace LoggingSourceGenerator
                 }
             }
 
-            // if tag is empty or null use class name
-            if (string.IsNullOrWhiteSpace(tag))
-            {
-                tag = SourceGeneratorUtils.GetFriendlyTypeName(classSymbol);
-            }
-
             return tag;
         }
 
@@ -130,9 +124,28 @@ namespace LoggingSourceGenerator
                 ++countTabs;
             }
 
+            bool hasExplicitTag = !string.IsNullOrWhiteSpace(tag);
+
+            if (hasExplicitTag)
             {
                 var safeTag = SourceGeneratorUtils.CSharpStringLiteral(tag);
-                stringBuilder.AppendLineWithTab($"private const string LOGGING_CLASS_TAG = {safeTag};", countTabs);
+                stringBuilder.AppendLineWithTab($"private string LoggingTag => {safeTag};", countTabs);
+                stringBuilder.AppendTabs(countTabs);
+            }
+            else
+            {
+                stringBuilder.AppendLineWithTab("private string LoggingTag", countTabs);
+                stringBuilder.AppendLineWithTab("{", countTabs);
+                stringBuilder.AppendLineWithTab("    get", countTabs);
+                stringBuilder.AppendLineWithTab("    {", countTabs);
+                stringBuilder.AppendLineWithTab("        var type = this.GetType();", countTabs);
+                stringBuilder.AppendLineWithTab("        if (type.IsGenericType)", countTabs);
+                stringBuilder.AppendLineWithTab("        {", countTabs);
+                stringBuilder.AppendLineWithTab("            return type.Name.Split('`')[0];", countTabs);
+                stringBuilder.AppendLineWithTab("        }", countTabs);
+                stringBuilder.AppendLineWithTab("        return type.Name;", countTabs);
+                stringBuilder.AppendLineWithTab("    }", countTabs);
+                stringBuilder.AppendLineWithTab("}", countTabs);
                 stringBuilder.AppendTabs(countTabs);
             }
 

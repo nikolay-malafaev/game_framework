@@ -15,7 +15,7 @@ namespace GameFramework.StaticData
                 return new StaticDataSettings()
                 {
                     AddressableDefaultLabel = "StaticData",
-                    AddressableDefaultGroupName = "Main"
+                    AddressableDefaultGroupName = "Common"
                 };
             }
         }

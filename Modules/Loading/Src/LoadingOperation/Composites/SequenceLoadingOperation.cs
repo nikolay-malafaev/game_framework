@@ -90,7 +90,7 @@ namespace GameFramework.Loading
                 value += _currentOperation.GetWeight() * _currentOperation.GetProgress();
             }
 
-            return Math.Clamp(value / _maxChildWeight, 0f, 1f);
+            return Mathf.Clamp(value / _maxChildWeight, 0f, 1f);
         }
     }
 }

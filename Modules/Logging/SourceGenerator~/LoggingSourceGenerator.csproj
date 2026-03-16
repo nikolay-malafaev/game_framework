@@ -13,6 +13,15 @@
 			<LogicalName>LoggingMethods</LogicalName>
 		</EmbeddedResource>
 	</ItemGroup>
-
-
+    
+    <PropertyGroup>
+        <OutputPath>$(MSBuildProjectDirectory)\..\BinarySourceGenerator\</OutputPath>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <GenerateDependencyFile>false</GenerateDependencyFile>
+        <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+        <DebugType>none</DebugType>
+        <IsRoslynAnalyzer>true</IsRoslynAnalyzer>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+    </PropertyGroup>
+    
 </Project>

@@ -1,8 +1,8 @@
-﻿namespace GameFramework.Utils
+﻿namespace GameFramework.Math
 {
-    public static class MathUtils
+    public static class Range
     {
-        public static float ConvertRange(float originalStart, float originalEnd, float newStart, float newEnd,
+        public static float Convert(float originalStart, float originalEnd, float newStart, float newEnd,
             float value)
         {
             if (originalEnd - originalStart == 0)
@@ -14,7 +14,7 @@
             return newStart + (value - originalStart) * scale;
         }
 
-        public static int ConvertRange(int originalStart, int originalEnd, int newStart, int newEnd, int value)
+        public static int Convert(int originalStart, int originalEnd, int newStart, int newEnd, int value)
         {
             if (originalEnd == originalStart)
             {

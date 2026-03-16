@@ -18,7 +18,7 @@ namespace GameFramework.Verification
             int sourceLineNumber, 
             string memberName)
         {
-            if (string.IsNullOrEmpty(message))
+            if (message.Empty())
             {
                 return string.Concat(memberName, " ()\n", TrimFilePath(sourceFilePath), ":", sourceLineNumber);
             }

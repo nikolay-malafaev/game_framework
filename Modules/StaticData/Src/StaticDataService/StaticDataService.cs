@@ -1,63 +1,102 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sirenix.Utilities;
+using GameFramework.Types;
 
 namespace GameFramework.StaticData
 {
     public class StaticDataService : IStaticDataService
     {
-        private readonly Dictionary<Type, List<StaticDataAsset>> _staticDataAssets = new();
-        
-        public TAsset Get<TAsset>() where TAsset : StaticDataAsset
+        private readonly Dictionary<Type, UniqueStaticDataAsset> _uniqueAssets = new();
+        private readonly Dictionary<Type, List<KeyedStaticDataAsset>> _keyedAssets = new();
+
+        public Optional<TAsset> Get<TAsset>() where TAsset : UniqueStaticDataAsset
         {
             Type assetType = typeof(TAsset);
 
-            if (!_staticDataAssets.TryGetValue(assetType, out List<StaticDataAsset> assets) || assets.Count == 0)
+            if (_uniqueAssets.TryGetValue(assetType, out UniqueStaticDataAsset asset))
             {
-                throw new Exception($"Configuration type {assetType} does not exist or is empty.");
+                return (TAsset)asset;
             }
 
-            return (TAsset) assets[0];
+            return Optional<TAsset>.None;
         }
-        
-        public IReadOnlyList<TAsset> GetAll<TAsset>() where TAsset : StaticDataAsset
+
+        public Optional<TAsset> Get<TAsset>(string id) where TAsset : KeyedStaticDataAsset
         {
             Type assetType = typeof(TAsset);
 
-            if (!_staticDataAssets.TryGetValue(assetType, out List<StaticDataAsset> assets))
+            if (_keyedAssets.TryGetValue(assetType, out List<KeyedStaticDataAsset> assets))
             {
-                throw new Exception($"Configuration type {assetType} does not exist.");
+                foreach (var asset in assets.Where(asset => asset.Key == id))
+                {
+                    return (TAsset)asset;
+                }
             }
 
-            return assets.Cast<TAsset>().ToList();
+            return Optional<TAsset>.None;
         }
 
-        public bool Contains<TAsset>() where TAsset : StaticDataAsset
+        public IReadOnlyList<TAsset> GetAll<TAsset>() where TAsset : KeyedStaticDataAsset
         {
             Type assetType = typeof(TAsset);
-            return _staticDataAssets.ContainsKey(assetType);
+
+            if (_keyedAssets.TryGetValue(assetType, out List<KeyedStaticDataAsset> assets))
+            {
+                return assets.Cast<TAsset>().ToList();
+            }
+
+            return Array.Empty<TAsset>();
         }
 
-        public void Add<TAsset>(TAsset asset) where TAsset : StaticDataAsset
+        public bool Contains<TAsset>() where TAsset : UniqueStaticDataAsset
+        {
+            return _uniqueAssets.ContainsKey(typeof(TAsset));
+        }
+
+        public bool Contains<TAsset>(string id) where TAsset : KeyedStaticDataAsset
+        {
+            Type assetType = typeof(TAsset);
+            return _keyedAssets.TryGetValue(assetType, out List<KeyedStaticDataAsset> assets) &&
+                   assets.Any(a => a.Key == id);
+        }
+
+        public void Add(UniqueStaticDataAsset asset)
         {
             if (asset == null) return;
-            
             Type assetType = asset.GetType();
-            
-            if (!_staticDataAssets.TryGetValue(assetType, out List<StaticDataAsset> assets))
-            {
-                assets = new List<StaticDataAsset>();
-                _staticDataAssets[assetType] = assets;
-            }
-            
-            assets.Add(asset);
+            _uniqueAssets[assetType] = asset;
         }
 
-        public void Add<TAsset>(IReadOnlyList<TAsset> assets) where TAsset : StaticDataAsset
+        public void Add(IEnumerable<UniqueStaticDataAsset> assets)
         {
             if (assets == null) return;
-            
+            foreach (var asset in assets)
+            {
+                Add(asset);
+            }
+        }
+
+        public void Add(KeyedStaticDataAsset asset)
+        {
+            if (asset == null) return;
+            Type assetType = asset.GetType();
+
+            if (!_keyedAssets.TryGetValue(assetType, out List<KeyedStaticDataAsset> assets))
+            {
+                assets = new List<KeyedStaticDataAsset>();
+                _keyedAssets[assetType] = assets;
+            }
+
+            if (!assets.Contains(asset))
+            {
+                assets.Add(asset);
+            }
+        }
+
+        public void Add(IEnumerable<KeyedStaticDataAsset> assets)
+        {
+            if (assets == null) return;
             foreach (var asset in assets)
             {
                 Add(asset);

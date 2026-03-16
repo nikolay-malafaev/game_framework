@@ -1,4 +1,4 @@
-﻿using UnityEditor;
+using UnityEditor;
 using UnityEditor.AddressableAssets.Settings;
 
 namespace GameFramework.StaticData
@@ -20,6 +20,21 @@ namespace GameFramework.StaticData
                 if (config == null)
                     continue;
 
+                if (config is UniqueStaticDataAsset)
+                {
+                    string typeName = config.GetType().Name;
+                    var typeGuids = AssetDatabase.FindAssets($"t:{typeName}");
+                    if (typeGuids.Length > 1)
+                    {
+                        string errorMsg = $"Asset creation error. Asset of type '{typeName}' is unique, and an asset of this type already exists in the project.";
+                        UnityEngine.Debug.LogError(errorMsg);
+                        Verification.NativeInterface.AlertDialog.Show("Asset creation error", errorMsg, "Ok", "Cancel");
+                        
+                        AssetDatabase.DeleteAsset(path);
+                        continue;
+                    }
+                }
+
                 var guid = AssetDatabase.AssetPathToGUID(path);
                 if (string.IsNullOrEmpty(guid))
                     continue;
@@ -40,24 +55,27 @@ namespace GameFramework.StaticData
                 UnityEngine.Debug.LogError("AddressableAssetSettingsDefaultObject.Settings is null. Skip applying Addressables.");
                 return;
             }
-            AddressableAssetGroup group = GetAddressableAssetGroup(settings);
-            AddressableAssetEntry entry = GetAddressableAssetEntry(settings, guid, group, assetPath);
-            settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryMoved, entry, true);
-            AssetDatabase.SaveAssets();
-        }
+            
+            AddressableAssetEntry entry = settings.FindAssetEntry(guid);
+            bool isNewEntry = false;
 
-        private static AddressableAssetGroup GetAddressableAssetGroup(AddressableAssetSettings settings)
-        {
-            return GetOrCreateDefaultAddressableAssetGroup(settings);
-        }
+            if (entry == null)
+            {
+                AddressableAssetGroup group = GetOrCreateDefaultAddressableAssetGroup(settings);
+                entry = settings.CreateOrMoveEntry(guid, group);
+                entry.address = GetAddressableAddress(assetPath);
+                isNewEntry = true;
+            }
 
-        private static AddressableAssetEntry GetAddressableAssetEntry(AddressableAssetSettings settings, string guid, AddressableAssetGroup group, string assetPath)
-        {
-            AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, group);
-            entry.address = GetAddressableAddress(assetPath);
             string label = GetOrCreateConfigLabel(settings);
             entry.SetLabel(label, true);
-            return entry;
+
+            var modificationEvent = isNewEntry 
+                ? AddressableAssetSettings.ModificationEvent.EntryAdded 
+                : AddressableAssetSettings.ModificationEvent.EntryModified;
+            
+            settings.SetDirty(modificationEvent, entry, true);
+            AssetDatabase.SaveAssets();
         }
 
         private static string GetAddressableAddress(string assetPath)

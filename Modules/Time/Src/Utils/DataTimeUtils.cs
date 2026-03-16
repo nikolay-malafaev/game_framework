@@ -1,6 +1,8 @@
 ﻿using System;
 using GameFramework.Types;
+using UnityEngine;
 
+// todo
 namespace GameFramework.Utils
 {
     public static class DataTimeUtils
@@ -16,7 +18,7 @@ namespace GameFramework.Utils
             }
             
             var percentage = (elapsed.TotalSeconds / totalDuration.TotalSeconds) * 100.0;
-            percentage = Math.Clamp(percentage, 0, 100);
+            percentage = Mathf.Clamp((float) percentage, 0, 100);
             return (int) percentage;
         }
         
@@ -29,7 +31,7 @@ namespace GameFramework.Utils
         
         public static DateTime GetDateTimeByPercentage(DateTime dateTime1, DateTime dateTime2, n_float percentage)
         {
-            pct_int newPercentage = (int) MathUtils.ConvertRange(0.0f, 1.0f, 0.0f, 100.0f, percentage);
+            pct_int newPercentage = (int) Math.Range.Convert(0.0f, 1.0f, 0.0f, 100.0f, percentage);
             return GetDateTimeByPercentage(dateTime1, dateTime2, newPercentage);
         }
     }

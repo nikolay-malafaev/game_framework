@@ -1,13 +1,18 @@
 ﻿using System.Collections.Generic;
+using GameFramework.Types;
 
 namespace GameFramework.StaticData
 {
     public interface IStaticDataService
     {
-        TAsset Get<TAsset>() where TAsset : StaticDataAsset;
-        IReadOnlyList<TAsset> GetAll<TAsset>() where TAsset : StaticDataAsset;
-        bool Contains<TAsset>() where TAsset : StaticDataAsset;
-        void Add<TAsset>(TAsset asset) where TAsset : StaticDataAsset;
-        void Add<TAsset>(IReadOnlyList<TAsset> assets) where TAsset : StaticDataAsset;
+        Optional<TAsset> Get<TAsset>() where TAsset : UniqueStaticDataAsset;
+        Optional<TAsset> Get<TAsset>(string id) where TAsset : KeyedStaticDataAsset;
+        IReadOnlyList<TAsset> GetAll<TAsset>() where TAsset : KeyedStaticDataAsset;
+        bool Contains<TAsset>() where TAsset : UniqueStaticDataAsset;
+        bool Contains<TAsset>(string id) where TAsset : KeyedStaticDataAsset;
+        void Add(UniqueStaticDataAsset asset);
+        void Add(IEnumerable<UniqueStaticDataAsset> assets);
+        void Add(KeyedStaticDataAsset asset);
+        void Add(IEnumerable<KeyedStaticDataAsset> assets);
     }
 }

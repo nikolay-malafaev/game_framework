@@ -22,7 +22,7 @@ namespace GameFramework.StaticData
             get
             {
                 IRemoteConfigService remoteConfigService = StaticDataContainer.Context.RemoteConfigService;
-                if (_canBeRemote && remoteConfigService != null && !string.IsNullOrEmpty(_remoteKey))
+                if (_canBeRemote && remoteConfigService != null && !_remoteKey.Empty())
                 {
                     return GetRemoteValue(remoteConfigService);
                 }

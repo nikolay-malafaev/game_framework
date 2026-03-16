@@ -143,7 +143,12 @@ internal static class SourceGeneratorUtils
         if (!typeSymbol.IsGenericType)
             return typeSymbol.Name;
 
-        var baseName = typeSymbol.ToDisplayString();
+        var baseName = typeSymbol.ToDisplayString()
+            .Replace("<", "_")
+            .Replace(">", "_")
+            .Replace(",", "_")
+            .Replace(" ", "");
+            
         var genericArgs = string.Join(".", typeSymbol.TypeArguments.Select(t => t.Name));
         return $"{baseName}.Generic.{genericArgs}";
     }
