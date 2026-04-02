@@ -1,11 +1,20 @@
-﻿using Sirenix.OdinInspector;
+using Sirenix.OdinInspector;
 
 namespace GameFramework.StaticData
 {
-    [InfoBox("Error: The asset is unique, but an instance of this type already exists in the project! Extra assets must be deleted.", InfoMessageType.Error, "IsDuplicate")]
     public abstract class UniqueStaticDataAsset : StaticDataAsset 
     {
 #if UNITY_EDITOR
+        [OnInspectorGUI]
+        [PropertyOrder(-10)]
+        private void DrawWarning()
+        {
+            if (IsDuplicate())
+            {
+                UnityEditor.EditorGUILayout.HelpBox("Error: The asset is unique, but an instance of this type already exists in the project! Extra assets must be deleted.", UnityEditor.MessageType.Error);
+            }
+        }
+
         private bool IsDuplicate()
         {
             string typeName = GetType().Name;

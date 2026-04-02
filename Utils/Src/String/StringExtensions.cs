@@ -4,6 +4,8 @@
     {
         return string.IsNullOrEmpty(@string);
     }
+    
+    public static bool NotEmpty(this string @string) => !Empty(@string);
 
     public static bool White(this string @string)
     {
