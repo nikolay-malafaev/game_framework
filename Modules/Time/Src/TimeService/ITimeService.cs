@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace GameFramework.Time
 {
@@ -8,5 +8,12 @@ namespace GameFramework.Time
         DateTime UtcNow { get; }
         long MonotonicTicks { get; }
         float GameSeconds { get; }
+        
+        bool IsPaused { get; }
+        
+        event Action<bool> Paused;
+
+        void Pause();
+        void UnPause();
     }
 }
