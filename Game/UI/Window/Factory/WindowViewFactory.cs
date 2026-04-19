@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using Cysharp.Threading.Tasks;
+using GameFramework.Infrastructure;
 using GameFramework.Verification;
 using VContainer;
 using VContainer.Unity;
@@ -10,13 +11,13 @@ namespace GameFramework.UI.Window
     public partial class WindowViewFactory
     {
         private WindowViewBehaviour _prefab;
-        private IObjectResolver _objectResolver;
+        private SceneFactory _sceneFactory;
         private WindowSettings _windowSettings;
         private string _windowId;
 
-        public WindowViewFactory(IObjectResolver objectResolver, WindowSettings windowSettings, string windowId)
+        public WindowViewFactory(SceneFactory sceneFactory, WindowSettings windowSettings, string windowId)
         {
-            _objectResolver = objectResolver;
+            _sceneFactory = sceneFactory;
             _windowSettings = windowSettings;
             _windowId = windowId;
         }
@@ -31,7 +32,7 @@ namespace GameFramework.UI.Window
         {
             if (Verify(_prefab, "WindowViewBehaviour not found in root node!"))
             {
-                return (TView) _objectResolver.Instantiate(_prefab);
+                return (TView) _sceneFactory.Instantiate(_prefab);
             }
             return null;
         }

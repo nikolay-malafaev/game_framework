@@ -20,7 +20,7 @@
                 }
             }
 
-            return true;
+            return false;
         }
 
         public static TParameter GetParameter<TParameter>(this IWindowParameter[] parameters, TParameter defaultParameter) where TParameter : class, IWindowParameter

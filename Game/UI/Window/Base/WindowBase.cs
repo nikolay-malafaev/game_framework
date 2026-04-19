@@ -24,7 +24,7 @@ namespace GameFramework.UI.Window
     public abstract partial class WindowBase<TView> : IWindow, IAsyncStartable, IDisposable where TView : WindowViewBehaviour
     {
         protected TView _view;
-        private IStaticDataService _staticDataService;
+        protected IStaticDataService _staticDataService;
         private WindowViewFactory _windowFactory;
         private LifetimeScope _windowScope;
         private LifetimeScope _parentScope;
@@ -43,15 +43,16 @@ namespace GameFramework.UI.Window
 
         public async UniTask StartAsync(CancellationToken cancellation)
         {
-            LogInfo("onStartAsync");
             CreateWindowScope();
             ResolveDependencies();
             await InitializeWindowViewFactory();
             _initialized = true;
+            OnStart();
         }
 
         public void Dispose()
         {
+            OnDispose();
             if (_disposable.IsDisposed)
             {
                 return;
@@ -160,6 +161,9 @@ namespace GameFramework.UI.Window
             SetState(WindowState.Hiding);
             _view.Hide(OnHideCallback, parameters);
         }
+        
+        protected virtual void OnStart() {}
+        protected virtual void OnDispose() {}
 
         protected virtual void OnOpen(params IWindowParameter[] parameters) { }
         protected virtual void OnClose(params IWindowParameter[] parameters) { }
