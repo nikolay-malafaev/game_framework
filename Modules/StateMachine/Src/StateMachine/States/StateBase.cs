@@ -1,5 +1,3 @@
-using Cysharp.Threading.Tasks;
-
 namespace GameFramework.StateMachine
 {
     public abstract class StateBase<TStateMachine> : IState where TStateMachine : class, IStateMachine
@@ -11,8 +9,8 @@ namespace GameFramework.StateMachine
             _stateMachine = stateMachine;
         }
         
-        public virtual UniTask Enter() => UniTask.CompletedTask;
+        public virtual void Enter(params IStateParameter[] parameters) { }
         public virtual void Update() { }
-        public virtual UniTask Exit() => UniTask.CompletedTask;
+        public virtual void Exit() { }
     }
 }

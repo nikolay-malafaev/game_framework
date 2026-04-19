@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 namespace GameFramework.StateMachine
 {
-    public class StateMachine : IStateMachine
+    public class AsyncStateMachine : IAsyncStateMachine
     {
-        private readonly Dictionary<Type, IExitableState> _registeredStates = new();
-        private IExitableState _currentState;
+        private readonly Dictionary<Type, IAsyncState> _registeredStates = new();
+        private IAsyncState _currentState;
         private readonly Dictionary<Type, Delegate> _switchStateDelegates = new();        
         
         public Type PreviousState { get; private set; }
@@ -17,36 +17,24 @@ namespace GameFramework.StateMachine
             _currentState?.Update();
         }
 
-        public bool HasState<TState>() where TState : class, IExitableState
+        public bool HasState<TState>() where TState : class, IAsyncState
         {
             return _registeredStates.ContainsKey(typeof(TState));
         }
 
-        public void SwitchState<TState>() where TState : class, IState
+        public void SwitchState<TState>(params IStateParameter[] parameters) where TState : class, IAsyncState
         {
-            SwitchStateAsync<TState>().Forget(UnityEngine.Debug.LogException);
+            SwitchStateAsync<TState>(parameters).Forget(UnityEngine.Debug.LogException);
         }
 
-        public void SwitchState<TState, TPayload>(TPayload payload) where TState : class, IPayloadedState<TPayload>
-        {
-            SwitchStateAsync<TState, TPayload>(payload).Forget(UnityEngine.Debug.LogException);
-        }
-
-        public async UniTask SwitchStateAsync<TState>() where TState : class, IState
+        public async UniTask SwitchStateAsync<TState>(params IStateParameter[] parameters) where TState : class, IAsyncState
         {
             TState nextState = await GetAndPrepareNextState<TState>();
-            await nextState.Enter();
-            ExecuteSwitchStateEvent(nextState);
-        }
-
-        public async UniTask SwitchStateAsync<TState, TPayload>(TPayload payload) where TState : class, IPayloadedState<TPayload>
-        {
-            TState nextState = await GetAndPrepareNextState<TState>();
-            await nextState.Enter(payload);
+            await nextState.EnterAsync(parameters);
             ExecuteSwitchStateEvent(nextState);
         }
         
-        public TState GetState<TState>() where TState : class, IExitableState
+        public TState GetState<TState>() where TState : class, IAsyncState
         {
             Type stateType = typeof(TState);
 
@@ -56,28 +44,32 @@ namespace GameFramework.StateMachine
             return _registeredStates[stateType] as TState;
         }
         
-        public TState GetCurrentState<TState>() where TState : class, IExitableState
+        public TState GetCurrentState<TState>() where TState : class, IAsyncState
         {
             return _currentState as TState;
         }
-        
-        public void RegisterState<TState>(TState state) where TState : class, IExitableState
+
+        public bool IsCurrentState<TState>() where TState : class, IAsyncState
+        {
+            return GetCurrentState<TState>() != null;
+        }
+
+        public void RegisterState<TState>(TState state) where TState : class, IAsyncState
         {
             Type stateType = typeof(TState);
 
-            if (_registeredStates.ContainsKey(stateType) == true)
+            if (_registeredStates.ContainsKey(stateType))
                 return;
 
             _registeredStates.Add(stateType, state);
         }
 
-        // todo need Func<State> - for resolve??? mb use di
-        public void LazyRegisterState<TState>() where TState : class, IExitableState, new()
+        public void LazyRegisterState<TState>() where TState : class, IAsyncState, new()
         {
             
         }
 
-        public void SubscribeToSwitchState<TState>(Action<TState> callback) where TState : class, IExitableState
+        public void SubscribeToSwitchState<TState>(Action<TState> callback) where TState : class, IAsyncState
         {
             if (callback == null)
             {
@@ -95,7 +87,7 @@ namespace GameFramework.StateMachine
             }
         }
 
-        public void UnsubscribeFromSwitchState<TState>(Action<TState> callback) where TState : class, IExitableState
+        public void UnsubscribeFromSwitchState<TState>(Action<TState> callback) where TState : class, IAsyncState
         {
             if (callback == null)
             {
@@ -118,7 +110,7 @@ namespace GameFramework.StateMachine
             }
         }
 
-        private void ExecuteSwitchStateEvent<TState>(TState state) where TState : class, IExitableState
+        private void ExecuteSwitchStateEvent<TState>(TState state) where TState : class, IAsyncState
         {
             if (!_switchStateDelegates.TryGetValue(typeof(TState), out var existing))
             {
@@ -128,22 +120,17 @@ namespace GameFramework.StateMachine
             ((Action<TState>)existing)?.Invoke(state);
         }
 
-        private async UniTask<TState> GetAndPrepareNextState<TState>() where TState : class, IExitableState
+        private async UniTask<TState> GetAndPrepareNextState<TState>() where TState : class, IAsyncState
         {
             TState nextState = GetState<TState>();
 
             if (_currentState != null)
-                await _currentState.Exit();
+                await _currentState.ExitAsync();
 
             PreviousState = _currentState?.GetType();
             _currentState = nextState;
 
             return nextState;
-        }
-
-        struct SwitchStateEvent<TState>
-        {
-            public Action<TState> _onSwitchState;
         }
     }
 }
