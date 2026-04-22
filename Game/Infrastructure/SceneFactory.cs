@@ -9,6 +9,7 @@ namespace GameFramework.Infrastructure
         [Inject]
         private IObjectResolver _objectResolver;
 
+        // todo hardcode
         [Inject]
         [Key("RuntimeNode")]
         private Transform _runtimeNode;

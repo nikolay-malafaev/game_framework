@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using GameFramework.Logging;
+using GameFramework.StaticData;
 using UnityEngine;
 using VContainer;
 
@@ -11,13 +12,21 @@ namespace GameFramework.UI.Window
     {
         [SerializeField] 
         private WindowAnimatorBehaviour _windowAnimator;
-        [Inject]
-        private WindowSettings _windowSettings;
-        [Inject] 
-        private CommonWindowSettings _commonWindowSettings;
+        
+        protected CommonWindowSettings _commonWindowSettings;
+        protected WindowSettings _windowSettings;
+        
+        public string WindowId { get; private set; }
         
         public event Action HideWindowClicked;
         public event Action CloseWindowClicked;
+
+        public void Initialize(IObjectResolver objectResolver, string windowId)
+        {
+            WindowId = windowId;
+            _commonWindowSettings = objectResolver.Resolve<IStaticDataService>().Get<CommonWindowSettings>().Value();
+            _windowSettings = objectResolver.Resolve<IStaticDataService>().Get<WindowSettings>(WindowId).Value();
+        }
 
         public virtual void Show(Action onShow, params IWindowParameter[] parameters)
         {

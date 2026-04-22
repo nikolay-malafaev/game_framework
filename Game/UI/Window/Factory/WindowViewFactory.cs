@@ -11,12 +11,14 @@ namespace GameFramework.UI.Window
     public partial class WindowViewFactory
     {
         private WindowViewBehaviour _prefab;
+        private IObjectResolver _objectResolver;
         private SceneFactory _sceneFactory;
         private WindowSettings _windowSettings;
         private string _windowId;
 
-        public WindowViewFactory(SceneFactory sceneFactory, WindowSettings windowSettings, string windowId)
+        public WindowViewFactory(IObjectResolver objectResolver, SceneFactory sceneFactory, WindowSettings windowSettings, string windowId)
         {
+            _objectResolver = objectResolver;
             _sceneFactory = sceneFactory;
             _windowSettings = windowSettings;
             _windowId = windowId;
@@ -32,7 +34,9 @@ namespace GameFramework.UI.Window
         {
             if (Verify(_prefab, "WindowViewBehaviour not found in root node!"))
             {
-                return (TView) _sceneFactory.Instantiate(_prefab);
+                TView view = (TView) _sceneFactory.Instantiate(_prefab);
+                view.Initialize(_objectResolver, _windowId);
+                return view;
             }
             return null;
         }
