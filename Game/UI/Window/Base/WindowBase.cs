@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using GameFramework.Logging;
@@ -192,15 +192,13 @@ namespace GameFramework.UI.Window
         {
             _windowScope = _parentScope.CreateChild(builder =>
             {
-                var commonWindowSettings = _staticDataService.Get<CommonWindowSettings>();
-                if (commonWindowSettings.HasValue())
+                if (_staticDataService.Contains<CommonWindowSettings>())
                 {
-                    builder.RegisterInstance(commonWindowSettings.Value());
+                    builder.RegisterInstance(_staticDataService.Get<CommonWindowSettings>());
                 }
-                var windowSettings = _staticDataService.Get<WindowSettings>(Id);
-                if (windowSettings.HasValue())
+                if (_staticDataService.Contains<WindowSettings>(Id))
                 {
-                    builder.RegisterInstance(windowSettings.Value());
+                    builder.RegisterInstance(_staticDataService.Get<WindowSettings>(Id));
                 }
                 builder.Register<WindowViewFactory>(Lifetime.Scoped).WithParameter(Id);
             });

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using GameFramework.Logging;
 using GameFramework.StaticData;
@@ -24,8 +24,8 @@ namespace GameFramework.UI.Window
         public void Initialize(IObjectResolver objectResolver, string windowId)
         {
             WindowId = windowId;
-            _commonWindowSettings = objectResolver.Resolve<IStaticDataService>().Get<CommonWindowSettings>().Value();
-            _windowSettings = objectResolver.Resolve<IStaticDataService>().Get<WindowSettings>(WindowId).Value();
+            _commonWindowSettings = objectResolver.Resolve<IStaticDataService>().Get<CommonWindowSettings>();
+            _windowSettings = objectResolver.Resolve<IStaticDataService>().Get<WindowSettings>(WindowId);
         }
 
         public virtual void Show(Action onShow, params IWindowParameter[] parameters)

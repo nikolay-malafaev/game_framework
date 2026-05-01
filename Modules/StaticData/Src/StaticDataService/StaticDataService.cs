@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using GameFramework.Types;
 
 namespace GameFramework.StaticData
 {
@@ -10,55 +9,85 @@ namespace GameFramework.StaticData
         private readonly Dictionary<Type, UniqueStaticDataAsset> _uniqueAssets = new();
         private readonly Dictionary<Type, List<KeyedStaticDataAsset>> _keyedAssets = new();
 
-        public Optional<TAsset> Get<TAsset>() where TAsset : UniqueStaticDataAsset
+        public TAsset Get<TAsset>() where TAsset : UniqueStaticDataAsset
         {
             Type assetType = typeof(TAsset);
 
-            if (_uniqueAssets.TryGetValue(assetType, out UniqueStaticDataAsset asset))
+            if (_uniqueAssets.TryGetValue(assetType, out UniqueStaticDataAsset exactAsset))
             {
-                return (TAsset)asset;
+                return (TAsset) exactAsset;
             }
 
-            return Optional<TAsset>.None;
-        }
-
-        public Optional<TAsset> Get<TAsset>(string id) where TAsset : KeyedStaticDataAsset
-        {
-            Type assetType = typeof(TAsset);
-
-            if (_keyedAssets.TryGetValue(assetType, out List<KeyedStaticDataAsset> assets))
+            foreach (var pair in _uniqueAssets)
             {
-                foreach (var asset in assets.Where(asset => asset.Key == id))
+                if (assetType.IsAssignableFrom(pair.Key))
                 {
-                    return (TAsset)asset;
+                    return (TAsset) pair.Value;
                 }
             }
 
-            return Optional<TAsset>.None;
+            throw new InvalidOperationException($"StaticDataService: unique asset of type '{assetType.Name}' is not registered.");
+        }
+
+        public TAsset Get<TAsset>(string id) where TAsset : KeyedStaticDataAsset
+        {
+            Type assetType = typeof(TAsset);
+
+            if (_keyedAssets.TryGetValue(assetType, out List<KeyedStaticDataAsset> exactAssets))
+            {
+                foreach (var asset in exactAssets)
+                {
+                    if (asset.Key == id)
+                    {
+                        return (TAsset)asset;
+                    }
+                }
+            }
+
+            foreach (var pair in _keyedAssets)
+            {
+                if (pair.Key == assetType) continue;
+                
+                if (assetType.IsAssignableFrom(pair.Key))
+                {
+                    foreach (var asset in pair.Value)
+                    {
+                        if (asset.Key == id)
+                        {
+                            return (TAsset)asset;
+                        }
+                    }
+                }
+            }
+
+            throw new InvalidOperationException($"StaticDataService: keyed asset of type '{assetType.Name}' with id '{id}' is not registered.");
         }
 
         public IReadOnlyList<TAsset> GetAll<TAsset>() where TAsset : KeyedStaticDataAsset
         {
             Type assetType = typeof(TAsset);
-
-            if (_keyedAssets.TryGetValue(assetType, out List<KeyedStaticDataAsset> assets))
+            List<TAsset> result = new List<TAsset>();
+            
+            foreach (var pair in _keyedAssets)
             {
-                return assets.Cast<TAsset>().ToList();
+                if (assetType.IsAssignableFrom(pair.Key))
+                {
+                
+                    result.AddRange(pair.Value.Cast<TAsset>());
+                }
             }
-
-            return Array.Empty<TAsset>();
+            
+            return result;
         }
 
         public bool Contains<TAsset>() where TAsset : UniqueStaticDataAsset
         {
-            return _uniqueAssets.ContainsKey(typeof(TAsset));
+            return Get<TAsset>() != null;
         }
 
         public bool Contains<TAsset>(string id) where TAsset : KeyedStaticDataAsset
         {
-            Type assetType = typeof(TAsset);
-            return _keyedAssets.TryGetValue(assetType, out List<KeyedStaticDataAsset> assets) &&
-                   assets.Any(a => a.Key == id);
+            return Get<TAsset>(id) != null;
         }
 
         public void Add(UniqueStaticDataAsset asset)

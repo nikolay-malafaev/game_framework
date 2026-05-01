@@ -4,8 +4,16 @@ namespace GameFramework.UI.Tooltip
 {
     public interface ITooltipService
     {
-        void Show(string tooltipId, Vector2 position, params ITooltipParameter[] parameters);
+        TTooltip Show<TTooltip>(string tooltipId, params ITooltipParameter[] parameters) where TTooltip : TooltipBehaviour;
         void Hide(string tooltipId, params ITooltipParameter[] parameters);
         void HideAll(params ITooltipParameter[] parameters);
+    }
+
+    public enum TooltipDirection
+    {
+        Left,
+        Right,
+        Up,
+        Down
     }
 }

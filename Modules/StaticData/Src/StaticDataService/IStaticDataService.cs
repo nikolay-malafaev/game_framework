@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using GameFramework.Types;
+using System.Collections.Generic;
 
 namespace GameFramework.StaticData
 {
     public interface IStaticDataService
     {
-        Optional<TAsset> Get<TAsset>() where TAsset : UniqueStaticDataAsset;
-        Optional<TAsset> Get<TAsset>(string id) where TAsset : KeyedStaticDataAsset;
+        TAsset Get<TAsset>() where TAsset : UniqueStaticDataAsset;
+        TAsset Get<TAsset>(string id) where TAsset : KeyedStaticDataAsset;
         IReadOnlyList<TAsset> GetAll<TAsset>() where TAsset : KeyedStaticDataAsset;
         bool Contains<TAsset>() where TAsset : UniqueStaticDataAsset;
         bool Contains<TAsset>(string id) where TAsset : KeyedStaticDataAsset;

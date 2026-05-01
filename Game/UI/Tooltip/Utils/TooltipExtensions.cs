@@ -18,6 +18,21 @@ namespace GameFramework.UI.Tooltip
             return defaultParameter;
         }
 
+        public static bool HasParameter<TParameter>(
+            this ITooltipParameter[] parameters) where TParameter : class, ITooltipParameter
+        {
+            if (parameters == null || parameters.Length == 0)
+                return false;
+
+            foreach (var parameter in parameters)
+            {
+                if (parameter is TParameter)
+                    return true;
+            }
+
+            return false;
+        }
+
         public static bool TryGetParameter<TParameter>(
             this ITooltipParameter[] parameters,
             out TParameter outParameter) where TParameter : class, ITooltipParameter

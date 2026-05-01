@@ -1,11 +1,14 @@
 ﻿using System;
 
-public class IdListAttribute : Attribute
+namespace GameFramework.Types
 {
-    public string ListName { get; }
-    
-    public IdListAttribute(string listName)
+    public class IdListAttribute : Attribute
     {
-        ListName = listName;
+        public string ListName { get; }
+    
+        public IdListAttribute(string listName)
+        {
+            ListName = listName;
+        }
     }
 }

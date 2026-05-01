@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 
-public interface IIdList
+namespace GameFramework.Types
 {
-    public IEnumerable<string> GetIds();
-}
+    public interface IIdList
+    {
+        public IEnumerable<string> GetIds();
+    }
+}
