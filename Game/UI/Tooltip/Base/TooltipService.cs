@@ -42,7 +42,7 @@ namespace GameFramework.UI.Tooltip
 
             if (_tooltipServiceBehaviour == null)
             {
-                _tooltipServiceBehaviour = _sceneFactory.Instantiate(commonSettings.TooltipServicePrefab);
+                _tooltipServiceBehaviour = _sceneFactory.Instantiate(commonSettings.TooltipServicePrefab, "UI/Tooltip");
             }
 
             if (!parameters.HasParameter<PositionTooltipParameter>())

@@ -27,10 +27,12 @@ namespace GameFramework.UI.Window
         private LifetimeScope _windowScope;
         private LifetimeScope _parentScope;
         private CompositeDisposable _disposable = new ();
-        private bool _initialized = false;
+        private bool _isInitialized = false;
 
         public abstract string Id { get; }
         public WindowState State { get; private set; } = WindowState.None;
+        public bool IsInitialized => _isInitialized;
+        public bool IsValid => _isInitialized && _view != null && !_disposable.IsDisposed;
         private IObjectResolver ObjectResolver => _windowScope.Container;
 
         public WindowBase(LifetimeScope lifetimeScope)
@@ -44,7 +46,7 @@ namespace GameFramework.UI.Window
             CreateWindowScope();
             ResolveDependencies();
             await InitializeWindowViewFactory();
-            _initialized = true;
+            _isInitialized = true;
             OnStart();
         }
 
@@ -62,7 +64,7 @@ namespace GameFramework.UI.Window
         
         public void Open(Action onOpen, params IWindowParameter[] parameters)
         {
-            if (!IsWindowInitialized())
+            if (!IsInitialized)
             {
                 LogError("Window not initialized!");
                 return;
@@ -92,7 +94,7 @@ namespace GameFramework.UI.Window
                 onClose?.Invoke();
             }
             
-            if (!IsWindowValid())
+            if (!IsValid)
             {
                 LogError("Window not valid!");
                 return;
@@ -114,7 +116,7 @@ namespace GameFramework.UI.Window
                 onShow?.Invoke();
             }
             
-            if (!IsWindowValid())
+            if (!IsValid)
             {
                 LogError("Window not valid!");
                 return;
@@ -143,7 +145,7 @@ namespace GameFramework.UI.Window
                 onHide?.Invoke();
             }
 
-            if (!IsWindowValid())
+            if (!IsValid)
             {
                 LogError("Window not valid!");
                 return;
@@ -213,16 +215,6 @@ namespace GameFramework.UI.Window
         private async UniTask InitializeWindowViewFactory()
         {
             await _windowFactory.Initialize();
-        }
-
-        private bool IsWindowInitialized()
-        {
-            return _initialized && !_disposable.IsDisposed;
-        }
-
-        private bool IsWindowValid()
-        {
-            return IsWindowInitialized() && _view != null;
         }
 
         private void CreateWindowView()

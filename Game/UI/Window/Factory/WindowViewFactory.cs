@@ -34,7 +34,7 @@ namespace GameFramework.UI.Window
         {
             if (Verify(_prefab, "WindowViewBehaviour not found in root node!"))
             {
-                TView view = (TView) _sceneFactory.Instantiate(_prefab);
+                TView view = (TView) _sceneFactory.Instantiate(_prefab, "UI/Window");
                 view.Initialize(_objectResolver, _windowId);
                 return view;
             }

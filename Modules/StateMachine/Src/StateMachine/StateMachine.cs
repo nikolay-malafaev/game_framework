@@ -10,6 +10,15 @@ namespace GameFramework.StateMachine
         private readonly Dictionary<Type, Delegate> _switchStateDelegates = new();        
         
         public Type PreviousState { get; private set; }
+        
+        public void Dispose()
+        {
+            if (_currentState != null)
+                _currentState.Exit();
+
+            PreviousState = _currentState?.GetType();
+            _currentState = null;
+        }
 
         public void Update()
         {
@@ -64,13 +73,7 @@ namespace GameFramework.StateMachine
 
             _registeredStates.Add(stateType, state);
         }
-
-        // todo need Func<State> - for resolve??? mb use di
-        public void LazyRegisterState<TState>() where TState : class, IState, new()
-        {
-            
-        }
-
+        
         public void SubscribeToSwitchState<TState>(Action<TState> callback) where TState : class, IState
         {
             if (callback == null)

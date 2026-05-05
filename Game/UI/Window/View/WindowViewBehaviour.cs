@@ -37,6 +37,7 @@ namespace GameFramework.UI.Window
             }
             else
             {
+                gameObject.SetActive(true);
                 onShow?.Invoke();
             }
         }
@@ -50,6 +51,7 @@ namespace GameFramework.UI.Window
             }
             else
             {
+                gameObject.SetActive(false);
                 onHide?.Invoke();
             }
         }

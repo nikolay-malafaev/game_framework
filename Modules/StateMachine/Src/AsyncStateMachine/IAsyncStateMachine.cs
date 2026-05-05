@@ -9,7 +9,6 @@ namespace GameFramework.StateMachine
         void Update();
         bool HasState<TState>() where TState : class, IAsyncState;
         UniTask SwitchStateAsync<TState>(params IStateParameter[] parameters) where TState : class, IAsyncState;
-        void SwitchState<TState>(params IStateParameter[] parameters) where TState : class, IAsyncState;
         TState GetState<TState>() where TState : class, IAsyncState;
         TState GetCurrentState<TState>() where TState : class, IAsyncState;
         bool IsCurrentState<TState>() where TState : class, IAsyncState;

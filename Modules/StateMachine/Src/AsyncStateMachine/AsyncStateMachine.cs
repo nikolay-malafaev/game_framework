@@ -4,13 +4,22 @@ using System.Collections.Generic;
 
 namespace GameFramework.StateMachine
 {
-    public class AsyncStateMachine : IAsyncStateMachine
+    public class AsyncStateMachine : IAsyncStateMachine, IDisposable
     {
         private readonly Dictionary<Type, IAsyncState> _registeredStates = new();
         private IAsyncState _currentState;
         private readonly Dictionary<Type, Delegate> _switchStateDelegates = new();        
         
         public Type PreviousState { get; private set; }
+
+        public void Dispose()
+        {
+            if (_currentState != null)
+                _currentState.ExitAsync().Forget();
+
+            PreviousState = _currentState?.GetType();
+            _currentState = null;
+        }
 
         public void Update()
         {
@@ -20,11 +29,6 @@ namespace GameFramework.StateMachine
         public bool HasState<TState>() where TState : class, IAsyncState
         {
             return _registeredStates.ContainsKey(typeof(TState));
-        }
-
-        public void SwitchState<TState>(params IStateParameter[] parameters) where TState : class, IAsyncState
-        {
-            SwitchStateAsync<TState>(parameters).Forget(UnityEngine.Debug.LogException);
         }
 
         public async UniTask SwitchStateAsync<TState>(params IStateParameter[] parameters) where TState : class, IAsyncState

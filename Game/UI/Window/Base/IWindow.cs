@@ -5,6 +5,8 @@ namespace GameFramework.UI.Window
     public interface IWindow
     {
         string Id { get; }
+        bool IsInitialized { get; }
+        bool IsValid { get; }
         WindowState State { get; }
         void Open();
         void Open(Action onOpen, params IWindowParameter[] parameters);
